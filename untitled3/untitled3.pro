@@ -28,11 +28,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    requests.cpp
+    requests.cpp \
+    deom.cpp
 
 HEADERS += \
         mainwindow.h \
-        requests.h
+        requests.h \
+    deom.h
 
 FORMS += \
         mainwindow.ui

@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include<vector>
+#include<iostream>
+#include<deom.h>
+using namespace std;
 namespace Ui {
   class MainWindow;
 }
@@ -19,6 +22,7 @@ private slots:
   void on_pushButton_clicked();
 
 private:
+  vector<sper> sper_list;
   Ui::MainWindow *ui;
 };
 

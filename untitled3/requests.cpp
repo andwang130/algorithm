@@ -1,6 +1,7 @@
 #include "requests.h"
 #include<QMap>
 #include <QEventLoop>
+
 requests::requests()
 {
   m_accessManager=new QNetworkAccessManager();
@@ -28,7 +29,7 @@ QByteArray requests::set_data(QMap<QByteArray,QByteArray>&data)
     }
   return data_str;
 }
-QString requests::get(QString url,QMap<QByteArray,QByteArray>headers)
+response requests::get(QString url,QMap<QByteArray,QByteArray>headers)
 {
   QNetworkRequest requtst;
   requtst.setUrl(QUrl(url));
@@ -38,12 +39,10 @@ QString requests::get(QString url,QMap<QByteArray,QByteArray>headers)
   QObject::connect(m_accessManager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
   eventLoop.exec();
   QByteArray  bytes = reply->readAll();
-  QString str=QString::fromLocal8Bit(bytes);
-  qDebug()<<str<<endl;
-  delete m_accessManager;
-  return str;
+  response req(bytes);
+  return req;
 }
-QString requests::post(QString url,QMap<QByteArray,QByteArray>headers,QMap<QByteArray,QByteArray>data)
+response requests::post(QString url,QMap<QByteArray,QByteArray>headers,QMap<QByteArray,QByteArray>data)
 {
 
     QNetworkAccessManager *m_accessManager=new QNetworkAccessManager();
@@ -58,9 +57,47 @@ QString requests::post(QString url,QMap<QByteArray,QByteArray>headers,QMap<QByte
     QEventLoop eventLoop;
     QObject::connect(m_accessManager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
     eventLoop.exec();
-    QByteArray  bytes = reply->readAll();
-    QString str=QString::fromLocal8Bit(bytes);
-    qDebug()<<str<<endl;
-    delete m_accessManager;
-    return str;
+     QByteArray  bytes = reply->readAll();
+
+    response req(bytes);
+    return req;
+   
+}
+QString to_gbk(QByteArray bytes)
+{
+  QTextCodec *qtext=QTextCodec::codecForName("GBK");
+  QString str=qtext->toUnicode(bytes);
+  return str;
+}
+QByteArray to_gbk(QString bytes)
+{
+  QTextCodec *qtext=QTextCodec::codecForName("UTF-8");
+  QByteArray str=qtext->fromUnicode(bytes);
+  return str;
+}
+QString to_uft_8(QByteArray bytes)
+{
+  QTextCodec *qtext=QTextCodec::codecForName("UTF-8");
+  QString str=qtext->toUnicode(bytes);
+  return str;
+}
+//******
+response::response(QByteArray str)
+{
+  data=str;
+}
+QByteArray response::str()
+{
+  return data;
+}
+QJsonDocument response::json()
+{
+  QJsonParseError error;
+   //qDebug()<<to_uft_8(data)<<endl;
+
+  QString str=to_gbk(data);
+  QJsonDocument jsonDocument = QJsonDocument::fromJson(str.toUtf8(), &error);
+  qDebug()<<error.error<<endl;
+  return jsonDocument;
+
 }
