@@ -97,7 +97,7 @@ QJsonDocument response::json()
 
   QString str=to_gbk(data);
   QJsonDocument jsonDocument = QJsonDocument::fromJson(str.toUtf8(), &error);
-  qDebug()<<error.error<<endl;
+  //qDebug()<<error.error<<endl;
   return jsonDocument;
 
 }

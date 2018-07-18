@@ -25,8 +25,8 @@ using namespace std;
        return false;
      }
 
-
-       spe.token=QString::fromUtf8(rseult["successFlag"].toByteArray());
+      QMap<QString, QVariant> message=rseult["message"].toMap();
+       spe.token=QString::fromUtf8(message["token"].toByteArray());
 
 
  }
@@ -74,6 +74,7 @@ using namespace std;
                 sper user_sp;
                 user_sp.user=QString::fromStdString(user);
                 user_sp.passwd=QString::fromStdString(paswd);
+                user_sp.falg=i+1;
                 sper_list.push_back(user_sp);
                 break;
               }

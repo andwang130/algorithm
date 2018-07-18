@@ -11,6 +11,7 @@ struct sper
  QString user;
  QString passwd;
  QString token;
+ int falg;
 };
 int get_user(char *path,vector<sper> &sper_list);
 class mydemo
