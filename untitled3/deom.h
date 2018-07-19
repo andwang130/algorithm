@@ -18,5 +18,6 @@ class mydemo
 {
 public:
   bool login(sper &spe);
+  vector<QMap<QByteArray,QByteArray>> mydemo::get_clue(sper &spe);
 
 };
