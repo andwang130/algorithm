@@ -22,7 +22,7 @@ void MainWindow::UpdateSlot(int num)
 }
 
 
-void get_login(sper spe,MainWindow *window)
+void get_login(sper &spe,MainWindow *window)
 {
 
    mydemo demos;
@@ -49,12 +49,16 @@ void get_login(sper spe,MainWindow *window)
 }
 void run(sper spe,MainWindow *window)
 {
+  mydemo demos;
+   vector<QMap<QString, QString>> data;
+  data=demos.get_clue(spe);
 
 }
 void MainWindow::on_pushButton_clicked()
 {
 
-    char url[29]="C:\\Users\\me\\Desktop\\plan.txt";
+    //char url[29]="C:\\Users\\me\\Desktop\\plan.txt";
+    char url[25]="/home/meidai/桌面/plan";
     get_user(url,sper_list);
     set_table();
    for(int i=0;i<sper_list.size();i++)

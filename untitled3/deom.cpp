@@ -31,9 +31,9 @@ using namespace std;
 
 
  }
- vector<QMap<QByteArray,QByteArray>>mydemo::get_clue(sper &spe)
+ vector<QMap<QString, QString>>mydemo::get_clue(sper &spe)
  {
-     vector<QMap<QByteArray,QByteArray>> data_list;
+     vector<QMap<QString, QString>> data_list;
      QString url="http://ztcrm.zotye.com/saleClue_queryExtPageS.s";
      QMap<QByteArray,QByteArray>headers;
      headers["Host"]="ztcrm.zotye.com";
@@ -47,18 +47,19 @@ using namespace std;
       data["saleCluePublicType"]="0";
       requests requ;
       response resp=requ.post(url,headers,data);
-      QMap<QString, QVariant> rseult=req.json().toVariant().toMap();
+
+      QMap<QString, QVariant> rseult=resp.json().toVariant().toMap();
       QString flag=QString::fromUtf8(rseult["successFlag"].toByteArray());
       if(flag!="true")
         {
-          return false;
+          return data_list;
         }
       QMap<QString, QVariant>message =rseult["message"].toMap();
-      QList<QVariant>  data=message["data"].toList();
-      for(int i=0;i<data.size();i++)
+      QList<QVariant> data_QV=message["data"].toList();
+      for(int i=0;i<data_QV.size();i++)
       {
-        QMap<QString, QVariant> data_info=data.at(i).toMap();
-        QMap<QByteArray,QByteArray> qmap;
+        QMap<QString, QVariant> data_info=data_QV.at(i).toMap();
+        QMap<QString,QString> qmap;
         qmap["ztcrmAppToken"]=spe.token;
         qmap["clueType"]=QString::fromUtf8(data_info["clueType"].toByteArray());
         qmap["agePeriodId"]=QString::fromUtf8(data_info["agePeriodId"].toByteArray());
@@ -88,8 +89,9 @@ using namespace std;
 
         cmatch st;
         regex remark_re("关注车型:(.*?)\\(关注度");
-        regex_match(QString::fromUtf8(data_info["remark"].toByteArray()).toStdString().c_str(),remark_re,st);
-        qmap["carTypeName"]=QString::fromUtf8(st[1]); //T3001.5L-MT国V豪华型
+        regex_match(QString::fromUtf8(data_info["remark"].toByteArray()).toStdString().c_str(),st,remark_re);
+        string str=st[1];
+        qmap["carTypeName"]=QString::fromUtf8(str.c_str()); //T3001.5L-MT国V豪华型
 
 
         qmap["channelType"]=QString::fromUtf8(data_info["channelType"].toByteArray());//直接取
@@ -241,10 +243,11 @@ using namespace std;
         QString talks=QString("{\"talksPhaseId\":\"\",\"marketingActivityId\":\"\",\"tryDrivingCarTypeId\":\"\",\"talksPhaseDetailIds\":\"\",\"nextCallDate"
                               "\":\"%1\",\"talksType\":\"0\",\"talksContext\":\"hhhhhh\",\"nextCallDateStr\":\"%2\"}").arg(current_date,new_data);
         //{"talksPhaseId":"","marketingActivityId":"","tryDrivingCarTypeId":"","talksPhaseDetailIds":"","nextCallDate":"2018-07-19T16:00:00.000Z","talksType":"0","talksContext":"hhhhh","nextCallDateStr":"2018-07-20"}
-        qmap["talksRecordList"]=QString::fromUtf8(talks);
+        qmap["talksRecordList"]=QString::fromUtf8(talks.toStdString().c_str());
         data_list.push_back(qmap);
       }
-        return
+       qDebug()<<to_gbk(resp.str())<<endl;
+        return data_list;
  }
  int get_user(char *path,vector<sper> &sper_list)
  {
